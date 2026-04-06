@@ -1,21 +1,21 @@
-const oracledb = require('oracledb');
+const { Pool } = require('pg');
 
-const dbConfig = {
-  user: "system",
-  password: "Marvi2024",
-  connectString: "localhost:1522/FREEPDB1"
-};
+// Configuración para el nuevo contenedor Postgres de Marviplast
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'marviplast_db',
+  password: 'Marviplast',
+  port: 5433, // El puerto que vimos en Docker Desktop
+});
 
-async function getConnection() {
-  try {
-    const connection = await oracledb.getConnection(dbConfig);
-    console.log("✅ Conexión física establecida con Oracle");
-    return connection;
-  } catch (err) {
-    console.error("❌ Error en getConnection:", err.message);
-    throw err;
+// Mensaje para confirmar que la conexión funciona
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('❌ Error conectando a PostgreSQL:', err.stack);
+  } else {
+    console.log('✅ Conexión exitosa a PostgreSQL (Puerto 5433)');
   }
-}
+});
 
-// ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ ASÍ:
-module.exports = { getConnection };
+module.exports = pool;
